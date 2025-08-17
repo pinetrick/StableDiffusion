@@ -1,0 +1,55 @@
+
+docker run -it \
+  --name comfyui \
+  -v /opt/ai:/root/ai \
+  --gpus '"device=0"' \
+  -p 8188:8188 \
+  nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04 \
+  /bin/bash
+
+docker exec -it comfyui /bin/bash
+
+apt update
+apt install -y wget git curl python3 python3-venv pip
+
+
+
+
+cd ~/ai/
+# 安装依赖
+git clone https://github.com/comfyanonymous/ComfyUI.git
+cd ~/ai/ComfyUI
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+
+
+https://github.com/Comfy-Org/ComfyUI-Manager
+cd ~/ai/ComfyUI/custom_nodes
+git clone https://github.com/ltdrdata/ComfyUI-Manager comfyui-manager
+
+
+# 启动
+python main.py --listen 0.0.0.0
+
+
+
+
+
+
+docker commit comfyui pinetrick/comfyui:withmodelnew
+docker push pinetrick/comfyui:withmodelnew
+
+
+
+docker run -it \
+  --restart=always \
+  --name comfyui \
+  --gpus '"device=0"' \
+  -p 8188:8188 \
+  pinetrick/comfyui:withmodelnew \
+ /bin/bash -c "source /root/ComfyUI/venv/bin/activate && cd /root/ComfyUI/ && python3 main.py --listen 0.0.0.0 & exec bash"
+
+
+
