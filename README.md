@@ -1,6 +1,6 @@
 # StableDiffusion
 直接运行，一条命令：
-注意需要 ~130G 存储空间
+注意需要 ~140G 存储空间
 ```bash
 docker run -it \
   --restart=always \
